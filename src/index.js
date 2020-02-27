@@ -12,7 +12,13 @@ var ergebnisListe = [];
 var turnierName = "";
 var pruefungsName = "";
 const apiProxy = "https://sj-sam.de/apps/ewu-app/proxy2.php";
+const navigation=[
+    {"title":"Alle Turnier", "view":"turnierListeHtml","fab":"hidden"},
+    {"title":"Turnier", "view":"pruefungsListeHtml", "fab":"visible"},
+    {"title":"Pruefung", "view":"turnurlisteHtml","fab":"visible"},
 
+
+];
 
 
 
@@ -46,7 +52,7 @@ async function getZeitplan(turnierNr){
     let zeitplan = myJson.zeitplan;
     pruefungsListeHtml = zeitplan.map(drawPruefungen).join('\n');
     content.innerHTML = pruefungsListeHtml;
-    
+   
 }//------------------------------------------------------------------------------------------------------
 
 
