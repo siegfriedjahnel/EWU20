@@ -1,0 +1,18 @@
+ 
+$autKey = "Uar4nTRTqLip22l33u1wsvOqJw2LTfwe1q2ua88le1q2ua88l";
+$apiurl = "http://webapi.ewu-bund.de/api/";
+if(isset($_GET['a'])){
+    $a =$_GET['a'];
+}else{
+    $a = "Turniere/Aktuell";
+}
+$uri = $apiurl.$a."?authKey=".$autKey;
+$content = file_get_contents($uri);
+
+http://webapi.ewu-bund.de/swagger/v1/swagger.json
+
+http://webapi.ewu-bund.de/
+
+http://webapi.ewu-bund.de/api/Turniere/Aktuell?authKey=Uar4nTRTqLip22l33u1wsvOqJw2LTfwe1q2ua88le1q2ua88l
+http://webapi.ewu-bund.de/api/Turniere/Turnier/4721?authKey=Uar4nTRTqLip22l33u1wsvOqJw2LTfwe1q2ua88le1q2ua88l
+http://webapi.ewu-bund.de/api/Turniere/Pruefungen/4721?authKey=Uar4nTRTqLip22l33u1wsvOqJw2LTfwe1q2ua88le1q2ua88l
