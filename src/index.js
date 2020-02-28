@@ -4,11 +4,12 @@ const contentTitel = document.getElementById("contentTitel");
 const fab = document.getElementById("fab");
 const options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' };
 const loaderGif = `<img class="loadergGif" src="images/loading.gif">`;
-fab.addEventListener('click',backNavigation())
+fab.addEventListener('click',backNavigation);
 var turnierListeHtml = "";
-var zeitplan = [];
-var startListe = [];
-var ergebnisListe = [];
+var pruefungsListeHtml = "";
+var startListeHtml = "";
+var ergebnisListeHtml = "";
+var divId;
 var turnierName = "";
 var pruefungsName = "";
 const apiProxy = "https://sj-sam.de/apps/ewu-app/proxy2.php";
@@ -16,17 +17,17 @@ const navigation=[
     {"title":"Alle Turnier", "view":"turnierListeHtml","fab":"hidden"},
     {"title":"Turnier", "view":"pruefungsListeHtml", "fab":"visible"},
     {"title":"Pruefung", "view":"turnurlisteHtml","fab":"visible"},
-
-
 ];
 
-
+var navigationLevel = 0;
 
 getTurnierListe('Turniere/Aktuell')
 .then();
 
 //------------------------------------------------------------------------
 async function getTurnierListe(what){
+    navigationLevel = 0;
+    fab.style.visibility=navigation[navigationLevel].fab;
     content.innerHTML = `<img class="loadingGif" src="images/loading.gif">`;
     // let response = await fetch(`${apiProxy}?a=${what}`);
     let response = await fetch("Aktuell.json");
@@ -36,12 +37,15 @@ async function getTurnierListe(what){
     turnierListeHtml = turnierListe.map(drawTurniere).join('\n');
     content.innerHTML = turnierListeHtml;
     contentTitel.innerHTML = "Alle Turniere";
+
 }//-------------------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------------------------
 async function getZeitplan(turnierNr){
-    fab.style.visibility="visible";
+    navigationLevel = 1;
+    divId=turnierNr;
+    fab.style.visibility=navigation[navigationLevel].fab;
     contentTitel.innerHTML = "";
     content.innerHTML = loaderGif;
     // let response = await fetch(`${apiProxy}?a=Turniere/Zeitplan/${turnierNr}`);
@@ -57,8 +61,19 @@ async function getZeitplan(turnierNr){
 
 
 async function getStartListe(pruefungsId){
+    navigationLevel=2;
+    divId=pruefungsId;
+    fab.style.visibility=navigation[navigationLevel].fab;
+    contentTitel.innerHTML = "";
+    content.innerHTML = loaderGif;
+    let response = await fetch("Startliste.json");
+    let myJson = await response.json();
+    let startListe = myJson.reiterList;
+    contentTitel.innerHTML = myJson.pruefungKurz;
+    startListeHtml = startListe.map(drawStartliste).join('\n');
+    content.innerHTML = startListeHtml;
 
-    return startListe;
+    
 }
 
 async function getErgebnisListe(pruefungsId){
@@ -96,11 +111,20 @@ function drawPruefungen(element){
     return `<div class="card" id="${element.id}">
     <b>${wochenTag}, ${startZeit} ${eintrag}</b><br>
         <b>${reitplatz}</b>,  Nennungen: ${anzahlNennungen}<br>
-        <button class="linkButton" onclick="startliste(${pruefungsNr})">Startliste</button>
+        <button class="linkButton" onclick="getStartListe(${pruefungsNr})">Startliste</button>
         <button class="linkButton" onclick="pattern(${pruefungsNr})">Pattern</button>
         <button class="linkButton" onclick="ergebnis(${pruefungsNr})">Ergebnis</button>
     </div>`;
 }//-----------------------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------------------
+function drawStartliste(element){
+    return `<div class="card">
+    <b>${element.position} | ${element.reiter} (${element.startNr}) - ${element.pferd}</b>
+    </div>`;
+}
+//--------------------------------------------------------------------------------------------------------
 
 
 function backToAktuell(turnierNr){
@@ -112,5 +136,20 @@ function backToAktuell(turnierNr){
 }
 
 function backNavigation(){
-    console.log("back");
+    
+    switch(navigationLevel){
+        case 1:
+            content.innerHTML=turnierListeHtml;
+            document.getElementById(divId).scrollIntoView();
+        break;
+
+        case 2:
+            content.innerHTML=startListeHtml;
+            document.getElementById(divId).scrollIntoView();
+        break;
+        case 3:
+            content.innerHTML=pruefungsListeHtml;
+            document.getElementById(divId).scrollIntoView();
+        break;
+    }
 }
